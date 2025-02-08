@@ -20,7 +20,7 @@ export const signup = async (request, response, next) => {
         .json({ message: "email and password are required" });
     }
     const user = await User.create({ email, password });
-    response.cookie("jwt", createToken(email, user.id), {
+    const jwt = response.cookie("jwt", createToken(email, user.id), {
       maxAge,
       secure: true,
       sameSite: "None",
@@ -32,6 +32,7 @@ export const signup = async (request, response, next) => {
         email: user.email,
         profileSetup: user.profileSetup,
       },  
+      jwt
     });
   } catch (error) {
     return response
@@ -58,7 +59,7 @@ export const login = async (request, response, next) => {
       return response.status(401).json({ message: "Invalid password" });
       }
 
-    response.cookie("jwt", createToken(email, user.id), {
+    const jwt = response.cookie("jwt", createToken(email, user.id), {
       maxAge,
       secure: true,
       sameSite: "None",
@@ -74,6 +75,7 @@ export const login = async (request, response, next) => {
         image:user.image,
         color:user.color
       },
+      jwt
     });
   } catch (error) {
     return response
